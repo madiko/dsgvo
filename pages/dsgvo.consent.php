@@ -19,7 +19,7 @@ $formElements = [];
 $n = [];
 $n['label'] = '<label for="phpmailer-dsgvo_consent_css">' . $this->i18n('dsgvo_consent_css_label') . '</label>';
 $n['field'] = '<textarea class="form-control codemirror" id="phpmailer-dsgvo_consent_css" name="settings[dsgvo_consent_css]">'.$this->getConfig('dsgvo_consent_css') . '</textarea>';
-$n['note'] = 'Test';
+$n['note'] = $this->i18n('dsgvo_consent_css_notice');
 $formElements[] = $n;
 
 $fragment = new rex_fragment();
@@ -44,6 +44,36 @@ $fragment->setVar('body', $content, false);
 $fragment->setVar('buttons', $buttons, false);
 $content = $fragment->parse('core/page/section.php');
 echo '
-    <form action="' . rex_url::currentBackendPage() . '" method="post">
-        ' . $content . '
-    </form>';
+<form action="' . rex_url::currentBackendPage() . '" method="post">
+    ' . $content . '
+</form>';
+
+
+/* Template Code */
+$template_code_title .= $this->i18n('dsgvo_consent_template_code_title');
+
+$template_code_content .= '<p>'.$this->i18n('dsgvo_consent_template_code_description').'</p>';
+$template_code_content .= '<pre>'.
+htmlentities('
+<!-- DSGVO Cookie-Einverständnis -->
+<?php
+// DSGVO Consent-HTML + JS
+$output = new rex_fragment();
+    
+$output->setVar("info", "Um unsere Webseite für Sie optimal zu gestalten und fortlaufend verbessern zu können, verwenden wir Cookies. Durch die weitere Nutzung der Webseite stimmen Sie der Verwendung von Cookies zu. Weitere Informationen zu Cookies erhalten Sie in unserer");
+$output->setVar("learn_more", "Datenschutzerklärung");
+$output->setVar("dismiss", "OK");
+$output->setVar("url", "/datenschutz/");
+$output->setVar("html_padding", "Bottom");
+echo $output->parse("dsgvo-consent.fragment.inc.php");
+
+?>
+<!-- / DSGVO Cookie-Einverständnis -->
+')."</pre>";
+        
+        $fragment = new rex_fragment();
+        $fragment->setVar('title', $template_code_title, false);
+        $fragment->setVar('body', $template_code_content, false);
+        echo $fragment->parse('core/page/section.php');
+        
+    

@@ -49,15 +49,18 @@ if (rex::getUser()->isAdmin()) {
     $content .= '<p>'.$this->i18n('install_dsgvo_modul_description').'</p>';
 
     if ($module_id > 0) {
-        $content .= '<p><a class="btn btn-primary" href="index.php?page=dsgvo/install&amp;install=1&amp;module_id=' . $module_id . '" class="rex-button">' . $this->i18n('install_update_dsgvo_module', htmlspecialchars($module_name)) . '</a></p>';
+        $class = " panel-success";
+        $content .= '<p><a class="btn btn-primary" href="index.php?page=dsgvo/setup/modul&amp;install=1&amp;module_id=' . $module_id . '" class="rex-button">' . $this->i18n('install_update_dsgvo_module', htmlspecialchars($module_name)) . '</a></p>';
     } else {
-        $content .= '<p><a class="btn btn-primary" href="index.php?page=dsgvo/install&amp;install=1" class="rex-button">' . $this->i18n('install_dsgvo_modul', $dsgvo_module_name) . '</a></p>';
+        $class = " panel-danger";
+        $content .= '<p><a class="btn btn-primary" href="index.php?page=dsgvo/setup/modul&amp;install=1" class="rex-button">' . $this->i18n('install_dsgvo_modul', $dsgvo_module_name) . '</a></p>';
     }
 
 
     $fragment = new rex_fragment();
     $fragment->setVar('title', $this->i18n('install_dsgvo_modul'), false);
     $fragment->setVar('body', $content, false);
+    $fragment->setVar('class', $class, false);
     echo $fragment->parse('core/page/section.php');
   
 }

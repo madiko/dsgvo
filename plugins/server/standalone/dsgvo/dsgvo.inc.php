@@ -1,19 +1,20 @@
-<?
+<?php
 
 $params['rex-api-call'] = 'dsgvo';
-$params['api_key']      = '893ee5d818228af93d9e91679d6479be';
-$params['domains']      = 'lonex.de';
+$params['api_key']      = '';
+$params['domains']      = 'example.com';
 $params['version']      = 'standalone';
-$params['subversion']   = '20180424';
+$params['subversion']   = '20180511';
 $params['langs']        = 'de';
+$params['html']        = '1';
 $params['timestamp']    = time();
 
-$url = 'http://dsgvo.pixelfirma.de/?'.urldecode(http_build_query($params));
+$url = 'http://dsgvo.example.com/?'.urldecode(http_build_query($params));
 
 $filename = "dsgvo.json";
 
 if($_GET['api_key'] == $params['api_key']) {
-    if(getDsgvoFromServer()) {
+    if(getDsgvoFromServer() == "success") {
         $params['status'] = '1';
     } else {
         $params['status'] = '0';
@@ -29,7 +30,7 @@ function getDsgvoFromServer() {
 
     if (!curl_errno($curl)) { 
         file_put_contents(dirname(__FILE__)."/".$filename, $resp);
-        return true;
+        return "success";
     } else {
         return curl_error($curl);
     }
@@ -57,6 +58,9 @@ function getDsgvoPage($lang, $domain) { // Stellt Texte für die DSGVO-Seite zus
     $output->dsgvo_pool = getLocalPool();
     $output->lang = $lang;
     $output->domain = $domain;
+    $output->consent = "Einwilligen";
+    $output->revoke = "Widerrufen";
+    $output->source = "Quelle:";
 
     return $output->render('dsgvo-page.tpl.php');
 

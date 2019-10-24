@@ -7,7 +7,8 @@ class rex_api_dsgvo extends rex_api_function
     public function execute()
     {
         ob_end_clean();
-        $version = rex_request('version','int', 0.1); // Version der API
+        $version = rex_request('version','string', 0); // Version der API
+        $rex_version = rex_request('rex_version','string', 0); // Version der REDAXO-Installation
         $domains = rex_request('domains','string', ""); // Domain(s), kommasepariert
         $langs = rex_request('langs','string', ""); // Sprache(n) als ISO-Code, kommasepariert, optional 
         $keywords = rex_request('keywords','string', ""); // Schlüssel der einzelnen Dienste, kommasepariert, optional
@@ -42,7 +43,7 @@ class rex_api_dsgvo extends rex_api_function
                 $where_query .= ' AND (`api_key` = "" OR `api_key` IS NULL)';
             }
 
-            $dsgvo_items = array_filter(rex_sql::factory()->setDebug(0)->getArray('SELECT * FROM rex_dsgvo_server s LEFT JOIN rex_dsgvo_server_project p on s.domain = p.domain WHERE true '.$where_query.' ORDER BY prio', $params));
+            $dsgvo_items = array_filter(rex_sql::factory()->setDebug(0)->getArray('SELECT * FROM rex_dsgvo_server s LEFT JOIN rex_dsgvo_server_project p on s.domain = p.domain WHERE status = 1 '.$where_query.' ORDER BY prio', $params));
         
             if($html) {
                 $dsgvo_items = $this->Textile2HTML($dsgvo_items);
@@ -54,8 +55,8 @@ class rex_api_dsgvo extends rex_api_function
 
         // LOG
 
-        $raw = ["version" => $version, "domains" => $domains, "langs" => $langs, $keywords => $keywords];
-        rex_sql::factory()->setDebug(0)->setQuery('INSERT INTO rex_dsgvo_server_log (`domain`, `status`, `createdate`, `raw`) VALUES(?,?,?,?)', [$domains, 1, date('Y-m-d G:i:s'), json_encode($raw)] );
+        $raw = ["version" => $version, "domains" => $domains, "langs" => $langs, "keywords" => $keywords, "rex_version" => $rex_version];
+        rex_sql::factory()->setDebug(0)->setQuery('INSERT INTO rex_dsgvo_server_log (`domain`, `status`, `createdate`, `rex_version`, `raw`) VALUES(?,?,?,?,?)', [$domains, 1, date('Y-m-d G:i:s'), $rex_version, json_encode($raw)] );
 
         exit();
 
